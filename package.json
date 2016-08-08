@@ -1,0 +1,23 @@
+{
+  "name": "migrate_to_gitlab",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/superbuggy/migrate_to_gitlab.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/superbuggy/migrate_to_gitlab/issues"
+  },
+  "homepage": "https://github.com/superbuggy/migrate_to_gitlab#readme",
+  "dependencies": {
+    "request": "^2.74.0"
+  }
+}
