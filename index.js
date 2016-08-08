@@ -4,13 +4,37 @@ var sys     = require("sys");
 
 
 function gitHubUrl(){
-  return "https://api.github.com/orgs/ga-wdi-exercises/repos?access_token=" + process.env.github_access_token + "&limit=1";
+  return "https://api.github.com/orgs/ga-wdi-exercises/repos?access_token=" + process.env.github_access_token;
 }
 
-function repos (callback){
-  request( gitHubUrl(), { headers: { "User-Agent": "migrate_to_gitlab" } }, function (err, res, body) {
-    callback( JSON.parse(body) );
+function repos(callback, foundRepos, next){
+  var foundRepos  = foundRepos || [];
+  var url = gitHubUrl();
+  if (next) {
+    url += "&page=" + next;
+  }
+
+  request( url, { headers: { "User-Agent": "migrate_to_gitlab" } }, function (err, res, body) {
+    JSON.parse(body).forEach(function(repo){
+      foundRepos.push(repo);
+    })
+    var next;
+    try {
+      next = res.headers.link.match(/<(.*)>; rel="next"/);
+      if (next) {
+        next = next[1].split("&page=")[1];
+      }
+    } catch (e) {
+      next = undefined;
+    }
+
+    if (next) {
+      repos(callback, foundRepos, next)
+    } else {
+      callback( foundRepos );
+    }
   });
+
 }
 
 function createGitLabRepo ( repoName, callback ) {
@@ -49,7 +73,13 @@ repos( function(repositories){
         try {
           exec(bashCommand);
         } catch (err) {
-          console.log( err.stack );
+          console.log( "error: see log file for details" );
+          var timeAtErr = Date.now() = "";
+          exec('echo "' + timeAtErr +
+               ' in '   + repo.name +
+               ' (remote ' + remoteName +
+               '): '     + err.stack +
+               '" > error_log.txt') ;
         }
       }
 
